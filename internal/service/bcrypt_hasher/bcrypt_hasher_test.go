@@ -10,17 +10,17 @@ func TestBcryptHasher(t *testing.T) {
 	t.Run("property based test", func(t *testing.T) {
 		hasher := bcrypt_hasher.NewBcryptHasher(5)
 		assertion := func(pass string) bool {
-			if hasher.Compare(pass, "fake string") {
+			if hasher.Equals(pass, "fake string") {
 				return false
 			}
-			if hasher.Compare("fake string", pass) {
+			if hasher.Equals("fake string", pass) {
 				return false
 			}
 			hashedPass, err := hasher.Hash(pass)
 			if err != nil {
 				return false
 			}
-			if !hasher.Compare(pass, hashedPass) {
+			if !hasher.Equals(pass, hashedPass) {
 				return false
 			}
 			return true

@@ -15,9 +15,15 @@ type JWT struct {
 	AdminSecret       string `required:"true"`
 }
 
+type UsersDB struct {
+	LevelDBPath string `required:"true"`
+}
+
 type App struct {
 	HTTPServer  HTTPServer
 	ForwardHost string
+	JWT         JWT
+	UsersDB     UsersDB
 }
 
 func ReadFromEnv() App {
