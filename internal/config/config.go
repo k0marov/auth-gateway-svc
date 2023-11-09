@@ -10,7 +10,8 @@ type HTTPServer struct {
 }
 
 type App struct {
-	HTTPServer HTTPServer
+	HTTPServer  HTTPServer
+	ForwardHost string
 }
 
 func ReadFromEnv() App {

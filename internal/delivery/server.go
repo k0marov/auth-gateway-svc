@@ -7,12 +7,13 @@ import (
 )
 
 type Server struct {
-	cfg config.HTTPServer
-	r   chi.Router
+	cfg       config.HTTPServer
+	forwarder http.Handler
+	r         chi.Router
 }
 
-func NewServer(cfg config.HTTPServer) http.Handler {
-	srv := &Server{cfg, chi.NewRouter()}
+func NewServer(cfg config.HTTPServer, forwarder http.Handler) http.Handler {
+	srv := &Server{cfg, forwarder, chi.NewRouter()}
 	srv.defineEndpoints()
 	return srv
 }
@@ -20,9 +21,7 @@ func NewServer(cfg config.HTTPServer) http.Handler {
 func (s *Server) defineEndpoints() {
 	s.r.Post("/api/v1/register", s.Register)
 	s.r.Post("/api/v1/sign-in", s.SignIn)
-	s.r.Handle("/*", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Forward"))
-	}))
+	s.r.Handle("/*", s.forwarder)
 }
 
 func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
