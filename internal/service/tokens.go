@@ -20,9 +20,9 @@ func NewTokensService(cfg config.JWT) *TokensService {
 	return &TokensService{cfg}
 }
 
-func (t *TokensService) CreatePair(userId string) (*Tokens, error) {
+func (t *TokensService) CreatePair(userLogin string) *Tokens {
 	access, err := jwt.NewBuilder().
-		Subject(userId).
+		Subject(userLogin).
 		Expiration(time.Now().Add(time.Duration(t.cfg.AccessExpireInSec) * time.Second)).
 		Build()
 	if err != nil {
@@ -32,7 +32,7 @@ func (t *TokensService) CreatePair(userId string) (*Tokens, error) {
 	if err != nil {
 		log.Panicf("while signing access token: %v", err)
 	}
-	return &Tokens{Access: string(accessBytes)}, nil
+	return &Tokens{Access: string(accessBytes)}
 }
 
 func (t *TokensService) Refresh(refreshToken string) (*Tokens, error) {
