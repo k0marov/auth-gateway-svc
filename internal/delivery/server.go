@@ -18,6 +18,19 @@ func NewServer(cfg config.HTTPServer) http.Handler {
 }
 
 func (s *Server) defineEndpoints() {
+	s.r.Post("/api/v1/register", s.Register)
+	s.r.Post("/api/v1/sign-in", s.SignIn)
+	s.r.Handle("/*", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("Forward"))
+	}))
+}
+
+func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Register"))
+}
+
+func (s *Server) SignIn(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("SignIn"))
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
