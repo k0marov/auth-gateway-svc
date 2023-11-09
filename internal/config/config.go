@@ -9,6 +9,12 @@ type HTTPServer struct {
 	Host string `default:":8080"`
 }
 
+type JWT struct {
+	PrivateKey        string `required:"true"`
+	AccessExpireInSec int    `default:"100000"`
+	AdminSecret       string `required:"true"`
+}
+
 type App struct {
 	HTTPServer  HTTPServer
 	ForwardHost string

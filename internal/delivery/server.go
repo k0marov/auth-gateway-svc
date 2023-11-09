@@ -19,8 +19,8 @@ func NewServer(cfg config.HTTPServer, forwarder http.Handler) http.Handler {
 }
 
 func (s *Server) defineEndpoints() {
-	s.r.Post("/api/v1/register", s.Register)
-	s.r.Post("/api/v1/sign-in", s.SignIn)
+	s.r.Post("/api/v1/auth/register", s.Register)
+	s.r.Post("/api/v1/auth/sign-in", s.SignIn)
 	s.r.Handle("/*", s.forwarder)
 }
 
