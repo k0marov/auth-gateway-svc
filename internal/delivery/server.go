@@ -39,7 +39,7 @@ func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&authReq); err != nil {
 		core.WriteErrorResponse(w, &core.ClientError{
 			DisplayMessage: fmt.Sprintf("while decoding request: %v", err),
-			HTTPCode:       0,
+			HTTPCode:       http.StatusBadRequest,
 		})
 		return
 	}
@@ -52,7 +52,20 @@ func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) SignIn(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("SignIn"))
+	var authReq AuthRequest
+	if err := json.NewDecoder(r.Body).Decode(&authReq); err != nil {
+		core.WriteErrorResponse(w, &core.ClientError{
+			DisplayMessage: fmt.Sprintf("while decoding request: %v", err),
+			HTTPCode:       http.StatusBadRequest,
+		})
+		return
+	}
+	tokens, err := s.svc.Login(authReq.Login, authReq.Password)
+	if err != nil {
+		core.WriteErrorResponse(w, err)
+		return
+	}
+	json.NewEncoder(w).Encode(tokens)
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
