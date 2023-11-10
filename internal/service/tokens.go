@@ -16,6 +16,10 @@ type Tokens struct {
 	Access string
 }
 
+type UserClaims struct {
+	Login string
+}
+
 type TokensService struct {
 	cfg        config.JWT
 	privateKey *rsa.PrivateKey
@@ -51,11 +55,13 @@ func (t *TokensService) Create(userLogin string) *Tokens {
 	return &Tokens{Access: string(accessBytes)}
 }
 
-func (t *TokensService) Verify(accessToken string) bool {
-	_, err := jwt.Parse([]byte(accessToken), jwt.WithKey(jwa.RS256, t.publicKey), jwt.WithValidate(true))
-	return err == nil
-}
-
-func (t *TokensService) VerifyAdmin(gotAdminSecret string) bool {
-	return gotAdminSecret == t.cfg.AdminPassword
+func (t *TokensService) Verify(accessToken string) (u *UserClaims, ok bool) {
+	tok, err := jwt.Parse([]byte(accessToken), jwt.WithKey(jwa.RS256, t.publicKey), jwt.WithValidate(true))
+	if err != nil {
+		return nil, false
+	}
+	claims := &UserClaims{
+		Login: tok.Subject(),
+	}
+	return claims, true
 }

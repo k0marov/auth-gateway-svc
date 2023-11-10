@@ -27,6 +27,11 @@ var CEInvalidCredentials = &ClientError{
 	HTTPCode:       http.StatusUnauthorized,
 }
 
+var CEUnauthorized = &ClientError{
+	DisplayMessage: "you must be an admin user to perform this action",
+	HTTPCode:       http.StatusForbidden,
+}
+
 func WriteErrorResponse(w http.ResponseWriter, e error) {
 	if unwrapped := errors.Unwrap(e); unwrapped != nil {
 		e = unwrapped

@@ -26,7 +26,7 @@ func InitializeAndStart(cfg config.App) {
 	log.Printf("initialized admin account")
 
 	fwd := forwarder.NewForwarder(cfg.ForwardHost)
-	srv := delivery.NewServer(cfg.HTTPServer, fwd, svc, middleware.NewAuthMiddleware())
+	srv := delivery.NewServer(cfg.HTTPServer, fwd, svc, middleware.NewAuthMiddleware(tokens))
 	log.Printf("Listening at %s", cfg.HTTPServer.Host)
 	log.Print(http.ListenAndServe(cfg.HTTPServer.Host, srv))
 }
