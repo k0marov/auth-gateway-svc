@@ -8,7 +8,7 @@ import (
 var ErrIncorrectCreds = errors.New("incorrect credentials provided")
 
 type JWTPairCreator interface {
-	CreatePair(userLogin string) *Tokens
+	Create(userLogin string) *Tokens
 }
 
 type UserRepo interface {
@@ -37,7 +37,7 @@ func (a *Auth) Register(login, password string) (*Tokens, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to create user in repo: %v", err)
 	}
-	return a.jwt.CreatePair(login), nil
+	return a.jwt.Create(login), nil
 }
 
 func (a *Auth) Login(login, password string) (*Tokens, error) {
@@ -48,5 +48,5 @@ func (a *Auth) Login(login, password string) (*Tokens, error) {
 	if !a.hasher.Equals(password, hashedPass) {
 		return nil, ErrIncorrectCreds
 	}
-	return a.jwt.CreatePair(login), nil
+	return a.jwt.Create(login), nil
 }

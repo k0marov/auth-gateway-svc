@@ -10,9 +10,9 @@ type HTTPServer struct {
 }
 
 type JWT struct {
-	PrivateKey        string `required:"true"`
-	AccessExpireInSec int    `default:"100000"`
-	AdminSecret       string `required:"true"`
+	PrivateKeyFilePath string `required:"true"`
+	AccessExpireInSec  int    `default:"100000"`
+	AdminSecret        string `required:"true"`
 }
 
 type UsersDB struct {
@@ -21,16 +21,16 @@ type UsersDB struct {
 
 type App struct {
 	HTTPServer  HTTPServer
-	ForwardHost string
+	ForwardHost string `required:"true"`
 	JWT         JWT
 	UsersDB     UsersDB
 }
 
 func ReadFromEnv() App {
 	var cfg App
-	err := envconfig.Process("profiles", &cfg)
+	err := envconfig.Process("auth_gateway", &cfg)
 	if err != nil {
-		log.Panicf("while parsing app config from env: %w", err)
+		log.Fatalf("while parsing app config from env: %v", err)
 	}
 	return cfg
 }

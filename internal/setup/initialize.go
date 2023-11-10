@@ -15,9 +15,9 @@ func InitializeAndStart(cfg config.App) {
 	usersRepo := repository.NewUsersLevelDB(cfg.UsersDB.LevelDBPath)
 	tokens := service.NewTokensService(cfg.JWT)
 	hasher := bcrypt_hasher.NewBcryptHasher(8)
-	_ = service.NewAuth(tokens, usersRepo, hasher)
+	svc := service.NewAuth(tokens, usersRepo, hasher)
 	fwd := forwarder.NewForwarder(cfg.ForwardHost)
-	srv := delivery.NewServer(cfg.HTTPServer, fwd)
+	srv := delivery.NewServer(cfg.HTTPServer, fwd, svc)
 	log.Printf("Listening at %s", cfg.HTTPServer.Host)
 	log.Print(http.ListenAndServe(cfg.HTTPServer.Host, srv))
 }
