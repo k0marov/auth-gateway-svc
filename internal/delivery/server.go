@@ -40,12 +40,14 @@ func NewServer(cfg config.HTTPServer, forwarder http.Handler, svc IAuthService, 
 //	@description	but before that it checks that the JWT provided in Authorization header is valid.
 //  @description	If JWT is invalid, the Authorization header is deleted before proxying.
 //  @description	Authorization header must start with "Bearer " prefix.
+//  @description	User login is encoded in the JWT's "sub" claim.
 
 //	@contact.name	Sam Komarov
 //	@contact.url	github.com/k0marov
 //	@contact.email	sam@skomarov.com
 
 // @host		localhost:8080
+// @BasePath	/
 // @schemes     https http
 func (s *Server) defineEndpoints() {
 	s.r.Get("/swagger/*", httpSwagger.WrapHandler)

@@ -1,3 +1,4 @@
+basePath: /
 definitions:
   core.ClientError:
     properties:
@@ -16,8 +17,21 @@ definitions:
       access_token:
         type: string
     type: object
+host: localhost:8080
 info:
-  contact: {}
+  contact:
+    email: sam@skomarov.com
+    name: Sam Komarov
+    url: github.com/k0marov
+  description: |-
+    Auth gateway which provides JWT creation, validation, user creation and login.
+    It handles endpoints for login and registration, and all other requests it proxies to the next gateway,
+    but before that it checks that the JWT provided in Authorization header is valid.
+    If JWT is invalid, the Authorization header is deleted before proxying.
+    Authorization header must start with "Bearer " prefix.
+    User login is encoded in the JWT's "sub" claim.
+  title: auth-gateway-svc
+  version: "1.0"
 paths:
   /api/v1/auth/login:
     post:

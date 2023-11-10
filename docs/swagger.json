@@ -5,8 +5,17 @@
     ],
     "swagger": "2.0",
     "info": {
-        "contact": {}
+        "description": "Auth gateway which provides JWT creation, validation, user creation and login.\nIt handles endpoints for login and registration, and all other requests it proxies to the next gateway,\nbut before that it checks that the JWT provided in Authorization header is valid.\nIf JWT is invalid, the Authorization header is deleted before proxying.\nAuthorization header must start with \"Bearer \" prefix.\nUser login is encoded in the JWT's \"sub\" claim.",
+        "title": "auth-gateway-svc",
+        "contact": {
+            "name": "Sam Komarov",
+            "url": "github.com/k0marov",
+            "email": "sam@skomarov.com"
+        },
+        "version": "1.0"
     },
+    "host": "localhost:8080",
+    "basePath": "/",
     "paths": {
         "/api/v1/auth/login": {
             "post": {
