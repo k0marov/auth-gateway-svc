@@ -17,12 +17,12 @@ func (ce *ClientError) Error() string {
 	return fmt.Sprintf("an error which will be displayed to the client: %d %v", ce.HTTPCode, ce.DisplayMessage)
 }
 
-var UserAlreadyExists = &ClientError{
+var CEUserAlreadyExists = &ClientError{
 	DisplayMessage: "user with this login already exists",
 	HTTPCode:       http.StatusBadRequest,
 }
 
-var InvalidCredentials = &ClientError{
+var CEInvalidCredentials = &ClientError{
 	DisplayMessage: "invalid credentials",
 	HTTPCode:       http.StatusUnauthorized,
 }

@@ -26,7 +26,7 @@ func (u *UsersLevelDB) Create(login, hashedPassword string) error {
 		return fmt.Errorf("while ckeching if level db already has this login: %w", err)
 	}
 	if has {
-		return core.UserAlreadyExists
+		return core.CEUserAlreadyExists
 	}
 	err = u.db.Put([]byte(login), []byte(hashedPassword), &opt.WriteOptions{NoWriteMerge: true})
 	if err != nil {
@@ -38,7 +38,10 @@ func (u *UsersLevelDB) Create(login, hashedPassword string) error {
 func (u *UsersLevelDB) GetStoredPass(login string) (string, error) {
 	pass, err := u.db.Get([]byte(login), nil)
 	if err != nil {
-		return "", fmt.Errorf("while getting pass from leveldb: %v", err)
+		if err == leveldb.ErrNotFound {
+			return "", core.CEInvalidCredentials
+		}
+		return "", fmt.Errorf("while getting pass from leveldb: %w", err)
 	}
 	return string(pass), err
 }

@@ -1,11 +1,9 @@
 package service
 
 import (
-	"errors"
+	"auth-gateway-svc/internal/core"
 	"fmt"
 )
-
-var ErrIncorrectCreds = errors.New("incorrect credentials provided")
 
 type JWTPairCreator interface {
 	Create(userLogin string) *Tokens
@@ -35,7 +33,7 @@ func (a *Auth) Register(login, password string) (*Tokens, error) {
 	passHashed := a.hasher.Hash(password)
 	err := a.repo.Create(login, passHashed)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create user in repo: %v", err)
+		return nil, fmt.Errorf("failed to create user in repo: %w", err)
 	}
 	return a.jwt.Create(login), nil
 }
@@ -43,10 +41,10 @@ func (a *Auth) Register(login, password string) (*Tokens, error) {
 func (a *Auth) Login(login, password string) (*Tokens, error) {
 	hashedPass, err := a.repo.GetStoredPass(login)
 	if err != nil {
-		return nil, fmt.Errorf("while getting stored pass from repo: %v", err)
+		return nil, fmt.Errorf("while getting stored pass from repo: %w", err)
 	}
 	if !a.hasher.Equals(password, hashedPass) {
-		return nil, ErrIncorrectCreds
+		return nil, core.CEInvalidCredentials
 	}
 	return a.jwt.Create(login), nil
 }
