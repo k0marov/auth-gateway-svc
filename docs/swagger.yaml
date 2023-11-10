@@ -1,0 +1,80 @@
+definitions:
+  core.ClientError:
+    properties:
+      message:
+        type: string
+    type: object
+  delivery.AuthRequest:
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+    type: object
+  delivery.TokensResponse:
+    properties:
+      access_token:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /api/v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: auth data
+        in: body
+        name: auth
+        required: true
+        schema:
+          $ref: '#/definitions/delivery.AuthRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/delivery.TokensResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ClientError'
+      summary: Login using an email and password. Returns auth tokens.
+      tags:
+      - auth
+  /api/v1/auth/register:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: auth data
+        in: body
+        name: auth
+        required: true
+        schema:
+          $ref: '#/definitions/delivery.AuthRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/delivery.TokensResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ClientError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/core.ClientError'
+      summary: Only admins can register users, so if the caller's login is not 'admin',
+        403 is returned.
+      tags:
+      - auth
+schemes:
+- https
+- http
+swagger: "2.0"
