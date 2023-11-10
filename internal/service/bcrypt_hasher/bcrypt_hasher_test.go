@@ -16,10 +16,7 @@ func TestBcryptHasher(t *testing.T) {
 			if hasher.Equals("fake string", pass) {
 				return false
 			}
-			hashedPass, err := hasher.Hash(pass)
-			if err != nil {
-				return false
-			}
+			hashedPass := hasher.Hash(pass)
 			if !hasher.Equals(pass, hashedPass) {
 				return false
 			}
