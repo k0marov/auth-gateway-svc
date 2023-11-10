@@ -1,0 +1,17 @@
+version: '2.0'
+
+services:
+  auth-gateway-svc:
+    build:
+      context: .
+    env_file: .env
+    container_name: auth-gateway-svc
+    hostname: auth-gateway-svc
+    volumes:
+      - ${AUTH_GATEWAY_SVC_DATA_DIR:-./data/}:/data
+      - ./keys/:/keys
+    environment:
+      - AUTH_GATEWAY_USERSDB_LEVELDBPATH=/data/
+      - AUTH_GATEWAY_JWT_PRIVATEKEYFILEPATH=/keys/rs256.rsa
+    ports:
+      - "${GATEWAY_SVC_PORT:-8080}:8080"
