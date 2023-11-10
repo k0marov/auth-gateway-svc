@@ -15,23 +15,26 @@ type IAuthService interface {
 	Login(login, password string) (*service.Tokens, error)
 }
 
+type AuthMiddleware = func(forceAdmin bool) func(http.HandlerFunc) http.HandlerFunc
+
 type Server struct {
 	cfg       config.HTTPServer
 	forwarder http.Handler
 	r         chi.Router
 	svc       IAuthService
+	authMW    AuthMiddleware
 }
 
-func NewServer(cfg config.HTTPServer, forwarder http.Handler, svc IAuthService) http.Handler {
-	srv := &Server{cfg, forwarder, chi.NewRouter(), svc}
+func NewServer(cfg config.HTTPServer, forwarder http.Handler, svc IAuthService, authMW AuthMiddleware) http.Handler {
+	srv := &Server{cfg, forwarder, chi.NewRouter(), svc, authMW}
 	srv.defineEndpoints()
 	return srv
 }
 
 func (s *Server) defineEndpoints() {
-	s.r.Post("/api/v1/auth/register", s.Register)
-	s.r.Post("/api/v1/auth/sign-in", s.SignIn)
-	s.r.Handle("/*", s.forwarder)
+	s.r.Post("/api/v1/auth/register", s.authMW(true)(s.Register))
+	s.r.Post("/api/v1/auth/sign-in", s.authMW(false)(s.SignIn))
+	s.r.Handle("/*", s.authMW(false)(s.forwarder.ServeHTTP))
 }
 
 func (s *Server) Register(w http.ResponseWriter, r *http.Request) {

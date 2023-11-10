@@ -57,5 +57,5 @@ func (t *TokensService) Verify(accessToken string) bool {
 }
 
 func (t *TokensService) VerifyAdmin(gotAdminSecret string) bool {
-	return gotAdminSecret == t.cfg.AdminSecret
+	return gotAdminSecret == t.cfg.AdminPassword
 }

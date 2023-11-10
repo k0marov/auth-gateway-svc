@@ -12,7 +12,7 @@ type HTTPServer struct {
 type JWT struct {
 	PrivateKeyFilePath string `required:"true"`
 	AccessExpireInSec  int    `default:"100000"`
-	AdminSecret        string `required:"true"`
+	AdminPassword      string `required:"true"`
 }
 
 type UsersDB struct {

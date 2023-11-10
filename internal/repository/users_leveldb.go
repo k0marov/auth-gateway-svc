@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"auth-gateway-svc/internal/core"
 	"fmt"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/opt"
@@ -20,7 +21,14 @@ func NewUsersLevelDB(dbPath string) *UsersLevelDB {
 }
 
 func (u *UsersLevelDB) Create(login, hashedPassword string) error {
-	err := u.db.Put([]byte(login), []byte(hashedPassword), &opt.WriteOptions{NoWriteMerge: true})
+	has, err := u.db.Has([]byte(login), nil)
+	if err != nil {
+		return fmt.Errorf("while ckeching if level db already has this login: %w", err)
+	}
+	if has {
+		return core.UserAlreadyExists
+	}
+	err = u.db.Put([]byte(login), []byte(hashedPassword), &opt.WriteOptions{NoWriteMerge: true})
 	if err != nil {
 		return fmt.Errorf("while putting in level db: %w", err)
 	}
