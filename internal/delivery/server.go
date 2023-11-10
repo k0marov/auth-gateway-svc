@@ -33,7 +33,7 @@ func NewServer(cfg config.HTTPServer, forwarder http.Handler, svc IAuthService, 
 
 func (s *Server) defineEndpoints() {
 	s.r.Post("/api/v1/auth/register", s.authMW(true)(s.Register))
-	s.r.Post("/api/v1/auth/sign-in", s.authMW(false)(s.SignIn))
+	s.r.Post("/api/v1/auth/login", s.authMW(false)(s.Login))
 	s.r.Handle("/*", s.authMW(false)(s.forwarder.ServeHTTP))
 }
 
@@ -51,10 +51,10 @@ func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 		core.WriteErrorResponse(w, err)
 		return
 	}
-	json.NewEncoder(w).Encode(tokens)
+	json.NewEncoder(w).Encode(TokensResponse{AccessToken: tokens.Access})
 }
 
-func (s *Server) SignIn(w http.ResponseWriter, r *http.Request) {
+func (s *Server) Login(w http.ResponseWriter, r *http.Request) {
 	var authReq AuthRequest
 	if err := json.NewDecoder(r.Body).Decode(&authReq); err != nil {
 		core.WriteErrorResponse(w, &core.ClientError{
@@ -68,7 +68,7 @@ func (s *Server) SignIn(w http.ResponseWriter, r *http.Request) {
 		core.WriteErrorResponse(w, err)
 		return
 	}
-	json.NewEncoder(w).Encode(tokens)
+	json.NewEncoder(w).Encode(TokensResponse{AccessToken: tokens.Access})
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
