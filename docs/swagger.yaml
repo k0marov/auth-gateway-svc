@@ -1,0 +1,94 @@
+basePath: /
+definitions:
+  core.ClientError:
+    properties:
+      message:
+        type: string
+    type: object
+  delivery.AuthRequest:
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+    type: object
+  delivery.TokensResponse:
+    properties:
+      access_token:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: sam@skomarov.com
+    name: Sam Komarov
+    url: github.com/k0marov
+  description: |-
+    Auth gateway which provides JWT creation, validation, user creation and login.
+    It handles endpoints for login and registration, and all other requests it proxies to the next gateway,
+    but before that it checks that the JWT provided in Authorization header is valid.
+    If JWT is invalid, the Authorization header is deleted before proxying.
+    Authorization header must start with "Bearer " prefix.
+    User login is encoded in the JWT's "sub" claim.
+  title: auth-gateway-svc
+  version: "1.0"
+paths:
+  /api/v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: auth data
+        in: body
+        name: auth
+        required: true
+        schema:
+          $ref: '#/definitions/delivery.AuthRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/delivery.TokensResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ClientError'
+      summary: Login using an email and password. Returns auth tokens.
+      tags:
+      - auth
+  /api/v1/auth/register:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: auth data
+        in: body
+        name: auth
+        required: true
+        schema:
+          $ref: '#/definitions/delivery.AuthRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/delivery.TokensResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ClientError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/core.ClientError'
+      summary: Only admins can register users, so if the caller's login is not 'admin',
+        403 is returned.
+      tags:
+      - auth
+schemes:
+- https
+- http
+swagger: "2.0"
